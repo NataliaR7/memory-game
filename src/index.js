@@ -1,3 +1,10 @@
 import style from './style.css';
-import style2 from './style2.css';
-alert('11');
+import StatusBar from './components/js/statusBar';
+
+function render(targetElemnt, element) {
+  document
+    .querySelector(targetElemnt)
+    .insertAdjacentHTML('afterbegin', element());
+}
+
+render('#statusBar', StatusBar);
