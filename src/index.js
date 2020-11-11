@@ -1,13 +1,18 @@
 import './style.less';
-import StatusBar from './components/js/statusBar';
+import StatusBar from './components/statusBar/statusBar';
 import Leaderboard from './components/leaderboard/leaderboard';
+import GameField from './components/gameField/gamefield';
 
-function render(targetElemnt, element) {
-  document
-    .querySelector(targetElemnt)
-    .insertAdjacentHTML('afterbegin', element());
+const componentList = new Map([
+    ['#statusBar', StatusBar],
+    ['#leaderboard', Leaderboard],
+    ['#gameField', GameField],
+]);
+
+function render(targetElement, element) {
+    document.querySelector(targetElement).insertAdjacentHTML('afterbegin', element());
 }
 
-render('#statusBar', StatusBar);
-render('#leaderboard', Leaderboard);
-
+for (const targetElement of componentList) {
+    render(targetElement, componentList[targetElement]);
+}
