@@ -1,5 +1,6 @@
-import style from './style.css';
+import './style.less';
 import StatusBar from './components/js/statusBar';
+import Leaderboard from './components/leaderboard/leaderboard';
 
 function render(targetElemnt, element) {
   document
@@ -8,3 +9,5 @@ function render(targetElemnt, element) {
 }
 
 render('#statusBar', StatusBar);
+render('#leaderboard', Leaderboard);
+
