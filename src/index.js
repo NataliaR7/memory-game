@@ -13,6 +13,7 @@ function render(targetElement, element) {
     document.querySelector(targetElement).insertAdjacentHTML('afterbegin', element());
 }
 
-for (const targetElement of componentList) {
-    render(targetElement, componentList[targetElement]);
+for (const targetElement of componentList.keys()) {
+    console.log(componentList);
+    render(targetElement, componentList.get(targetElement));
 }
