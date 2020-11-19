@@ -17,5 +17,3 @@ export default function leaderboard() {
 function wrapRecords(record, id) {
     return `<div id="${id}">${record}</div>`
 }
-
-
