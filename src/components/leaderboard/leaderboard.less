@@ -1,5 +1,79 @@
 #leaderboard {
-  h1 {
-    color: aqua;
+  .head {
+    padding: 20px 0 20px 40px;
+    font-size: 36px;
+    background-color: rgba(255, 255, 255);
+  }
+
+  .body {
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-color: #e7e7e7  #f5f5f581; /* «цвет ползунка» «цвет полосы скроллбара» */
+    scrollbar-width: thin;
+  }
+
+  .body::-webkit-scrollbar {
+    width: 7px;
+    background: #ececec81;
+  }
+  .body::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: #dfdfdf;
+  }
+
+  .record {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid rgba(67, 67, 67, 0.5);
+    font-size: 20px;
+    max-height: 80px;
+  }
+
+  .number {
+    width: 8%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #D7D7D7;
+    align-self: center;
+    flex-shrink: 0;
+  }
+
+  #firstPlace .number{
+    background-color:#F4EB94;
+  }
+  
+  #secondPlace .number{
+    background-color:#66D2E1;
+  }
+
+  #thirdPlace .number{
+    background-color:#ED6161;
+  }
+
+  .number span {
+    display: block;
+    text-align: center;
+  }
+
+  .userName {
+    padding-left: 10px;
+    flex-grow: 4;
+    align-self: center;
+    font-size: 28px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .point {
+    padding: 0px 20px 0px 10px;
+    align-self: center;
+  }
+
+  .point span {
+    //background-color: rgb(182, 0, 182);
+    display: block;
+    text-align: center;
   }
 }
