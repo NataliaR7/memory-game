@@ -6,12 +6,12 @@ let cards = [];
 export default function start() {
     fillCardsCollection();
     let gameField = document.querySelector('#gameField');
-    console.log(cards);
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
+    gameField.addEventListener('click', reverseCard);
 }
 
 function fillCardsCollection() {
-    for (let i = 1; i < cardCount / 2; i++) {
+    for (let i = 1; i <= cardCount / 2; i++) {
         cards.push(card(false, 'cardSet1', `${i}.png`));
         cards.push(card(false, 'cardSet1', `${i}.png`));
     }
@@ -29,4 +29,10 @@ function randomSort(source) {
         result[i] = temp;
     }
     return result;
+}
+
+function reverseCard(event) {
+    let target = event.target.parentElement;
+	if (target.className !== 'card') return;
+	
 }
