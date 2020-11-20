@@ -7,10 +7,12 @@ import Card from './components/card/card';
 const componentList = new Map([
     ['#statusBar', StatusBar],
     ['#leaderboard', Leaderboard],
-    ['#gameField', GameField],
+    // ['#gameField', GameField],
+    ['#card', Card],
 ]);
 
 function render(targetElement, element) {
+    console.log(targetElement);
     document.querySelector(targetElement).insertAdjacentHTML('afterbegin', element());
 }
 
