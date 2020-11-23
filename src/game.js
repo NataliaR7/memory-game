@@ -7,7 +7,7 @@ export default function start() {
     fillCardsCollection();
     let gameField = document.querySelector('#gameField');
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
-    gameField.addEventListener('click', reverseCard);
+    gameField.addEventListener('click', flipCard);
 }
 
 function fillCardsCollection() {
@@ -31,8 +31,44 @@ function randomSort(source) {
     return result;
 }
 
-function reverseCard(event) {
-    let target = event.target.parentElement;
-	if (target.className !== 'card') return;
-	
+let flippedCards = [];
+
+function getControlWithTimer(control, timer) {
+    return { control, stopTimer: () => clearTimeout(timer) };
+}
+
+function openCard(card) {
+    card.classList.remove('closed');
+}
+
+function closeCard(card) {
+    card.classList.add('closed');
+}
+
+function flipCard(event) {
+    let target = event.target;
+    let targetParent = event.target.parentElement;
+    // console.dir(target);
+    // if (target.className !== 'card' && targetParent.className !== 'card') return;
+    if (targetParent.className !== 'card') return;
+    if (flippedCards.length >= 2) {
+        return;
+    }
+    // console.dir(event);
+    openCard(target);
+    let timer = setTimeout(() => {
+        closeCard(target);
+        flippedCards.shift();
+    }, 2000);
+
+    flippedCards.push(getControlWithTimer(target, timer));
+    if (flippedCards.length === 2) {
+        //console.dir(flipedCards[0].control.src, flipedCards[1].control.src)
+        if (flippedCards[0].control.src === flippedCards[1].control.src) {
+            console.log(flippedCards);
+            flippedCards[0].stopTimer();
+            flippedCards[1].stopTimer();
+            flippedCards = [];
+        }
+    }
 }

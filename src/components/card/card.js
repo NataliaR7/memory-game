@@ -1,5 +1,5 @@
 export default function card(isFront = false, set = 'cardSet1', picture = '1.png') {
-    let content = `<img src="./img/${set}/${picture}"></img>`
+    let content = `<img class="closed" src="./img/${set}/${picture}"></img>`
     let content2 = `<img src="./1123.gif"/>`
     let content3 = `<img src="https://img.icons8.com/dusk/64/000000/geometric-flowers.png"/>`
     let content1 = `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
