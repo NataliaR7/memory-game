@@ -8,8 +8,6 @@ import Game from './game';
 const componentList = new Map([
     ['#statusBar', StatusBar],
     ['#leaderboard', Leaderboard],
-    // ['#gameField', GameField],
-    
 ]);
 
 function render(targetElement, element) {
@@ -21,31 +19,3 @@ for (const targetElement of componentList.keys()) {
 }
 
 Game();
-
-// let cardCollectioon = document.querySelectorAll('#gameField > .card');
-// for (const cardItem of cardCollectioon) {
-//     cardItem.addEventListener('click', turnOn);
-// }
-
-// function turnOn(evt) {
-//     let target = evt.target;
-//     let targetParent = evt.target.parentElement;
-//     if (targetParent.className === 'card') {
-//         console.log('pic');
-//     } else {
-//         if (target.className !== 'card') return;
-//         else {
-//             console.dir(evt);
-//         }
-//     }
-// }
-
-function turnOn(evt) {
-    let target = evt.target;
-    let targetParent = evt.target.parentElement;
-    // if (target.className !== 'card') return;
-    // else {
-    //     console.dir(evt);
-    // }
-    console.dir(evt.currentTarget);
-}

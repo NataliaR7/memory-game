@@ -22,7 +22,7 @@ function randomSort(source) {
     let j,
         temp = 0;
     let result = source.slice();
-    for (var i = result.length - 1; i > 0; i--) {
+    for (let i = result.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
         temp = result[j];
         result[j] = result[i];
@@ -48,13 +48,10 @@ function closeCard(card) {
 function flipCard(event) {
     let target = event.target;
     let targetParent = event.target.parentElement;
-    // console.dir(target);
-    // if (target.className !== 'card' && targetParent.className !== 'card') return;
     if (targetParent.className !== 'card') return;
     if (flippedCards.length >= 2) {
         return;
     }
-    // console.dir(event);
     openCard(target);
     let timer = setTimeout(() => {
         closeCard(target);
@@ -63,7 +60,6 @@ function flipCard(event) {
 
     flippedCards.push(getControlWithTimer(target, timer));
     if (flippedCards.length === 2) {
-        //console.dir(flipedCards[0].control.src, flipedCards[1].control.src)
         if (flippedCards[0].control.src === flippedCards[1].control.src) {
             console.log(flippedCards);
             flippedCards[0].stopTimer();
@@ -71,9 +67,4 @@ function flipCard(event) {
             flippedCards = [];
         }
     }
-}
-function reverseCard(event) {
-	let target = event.target.parentElement;
-	if (target.className !== 'card') return;
-	
 }
