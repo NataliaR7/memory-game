@@ -9,7 +9,7 @@ const componentList = new Map([
     ['#statusBar', StatusBar],
     ['#leaderboard', Leaderboard],
     // ['#gameField', GameField],
-    ['#card', Card],
+    
 ]);
 
 function render(targetElement, element) {

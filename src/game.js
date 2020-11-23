@@ -32,7 +32,7 @@ function randomSort(source) {
 }
 
 function reverseCard(event) {
-    let target = event.target.parentElement;
+	let target = event.target.parentElement;
 	if (target.className !== 'card') return;
 	
 }
