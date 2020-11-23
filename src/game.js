@@ -72,3 +72,8 @@ function flipCard(event) {
         }
     }
 }
+function reverseCard(event) {
+	let target = event.target.parentElement;
+	if (target.className !== 'card') return;
+	
+}
