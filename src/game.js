@@ -41,7 +41,7 @@ function closeCard(card) {
     card.classList.remove('open');
 }
 
-function getImgSrc(card){
+function getImgSrc(card) {
     return card.querySelector('.back').src;
 }
 
@@ -51,6 +51,9 @@ function flipCard(event) {
     if (flippedCards.length >= 2) {
         flippedCards.forEach(closeCard);
         flippedCards = [];
+    }
+    if (flippedCards.includes(target)) {
+        return;
     }
     openCard(target);
     flippedCards.push(target);
