@@ -45,19 +45,22 @@ function getImgSrc(card) {
     return card.querySelector('.back').src;
 }
 
+let activeTimer;
+
 function flipCard(event) {
     let target = event.target.parentElement;
     if (target.className !== 'card') return;
     if (flippedCards.length >= 2) {
         flippedCards.forEach(closeCard);
         flippedCards = [];
+        // clearTimeout(ac)
     }
     if (flippedCards.includes(target)) {
         return;
     }
     openCard(target);
     flippedCards.push(target);
-    setTimeout(() => {
+    activeTimer = setTimeout(() => {
         if (flippedCards.length === 2) {
             if (!isCardEquivalent(flippedCards[0], flippedCards[1])) {
                 flippedCards.forEach(closeCard);
