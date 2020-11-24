@@ -33,38 +33,37 @@ function randomSort(source) {
 
 let flippedCards = [];
 
-function getControlWithTimer(control, timer) {
-    return { control, stopTimer: () => clearTimeout(timer) };
-}
-
 function openCard(card) {
-    card.classList.remove('closed');
+    card.classList.add('open');
 }
 
 function closeCard(card) {
-    card.classList.add('closed');
+    card.classList.remove('open');
+}
+
+function getImgSrc(card){
+    return card.querySelector('.back').src;
 }
 
 function flipCard(event) {
-    let target = event.target;
-    let targetParent = event.target.parentElement;
-    if (targetParent.className !== 'card') return;
+    let target = event.target.parentElement;
+    if (target.className !== 'card') return;
     if (flippedCards.length >= 2) {
-        return;
+        flippedCards.forEach(closeCard);
+        flippedCards = [];
     }
     openCard(target);
-    let timer = setTimeout(() => {
-        closeCard(target);
-        flippedCards.shift();
-    }, 2000);
-
-    flippedCards.push(getControlWithTimer(target, timer));
-    if (flippedCards.length === 2) {
-        if (flippedCards[0].control.src === flippedCards[1].control.src) {
-            console.log(flippedCards);
-            flippedCards[0].stopTimer();
-            flippedCards[1].stopTimer();
+    flippedCards.push(target);
+    setTimeout(() => {
+        if (flippedCards.length === 2) {
+            if (!isCardEquivalent(flippedCards[0], flippedCards[1])) {
+                flippedCards.forEach(closeCard);
+            }
             flippedCards = [];
         }
-    }
+    }, 1500);
+}
+
+function isCardEquivalent(firstCard, secondCard) {
+    return getImgSrc(firstCard) === getImgSrc(secondCard);
 }
