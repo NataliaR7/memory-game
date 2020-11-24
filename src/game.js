@@ -1,7 +1,9 @@
 import card from './components/card/card';
 
 const cardCount = 20;
+let points = 0;
 let cards = [];
+let timer = performance.now();
 
 export default function start() {
     fillCardsCollection();
@@ -64,6 +66,16 @@ function flipCard(event) {
         if (flippedCards.length === 2) {
             if (!isCardEquivalent(flippedCards[0], flippedCards[1])) {
                 flippedCards.forEach(closeCard);
+                if (points >= cardCount / 2) points-= cardCount / 2;
+                console.log('points ' + points);
+            } else {
+                let end = performance.now();
+                let time = end - timer;
+                let currentPoint = Math.ceil((cardCount * 10000) / time);
+                points += currentPoint > 0 ? currentPoint : cardCount / 2;
+                timer = performance.now();
+                console.log('WIN ' + time);
+                console.log('points ' + points);
             }
             flippedCards = [];
         }
