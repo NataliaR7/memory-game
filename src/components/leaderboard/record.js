@@ -4,7 +4,7 @@ export default function record(number, userName, point) {
         <div class = "number"><span>${number}</span></div>
         <div class = 'userName'>${userName}</div>
         <div class = 'point'>
-            <span>${point}</span>
+            <span class='currentPoint'>${point}</span>
             <span>point<span>
         </div>
     </div>

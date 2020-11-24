@@ -66,16 +66,9 @@ function flipCard(event) {
         if (flippedCards.length === 2) {
             if (!isCardEquivalent(flippedCards[0], flippedCards[1])) {
                 flippedCards.forEach(closeCard);
-                if (points >= cardCount / 2) points-= cardCount / 2;
-                console.log('points ' + points);
+                changePoints('decrease');
             } else {
-                let end = performance.now();
-                let time = end - timer;
-                let currentPoint = Math.ceil((cardCount * 10000) / time);
-                points += currentPoint > 0 ? currentPoint : cardCount / 2;
-                timer = performance.now();
-                console.log('WIN ' + time);
-                console.log('points ' + points);
+                changePoints('increase');
             }
             flippedCards = [];
         }
@@ -84,4 +77,24 @@ function flipCard(event) {
 
 function isCardEquivalent(firstCard, secondCard) {
     return getImgSrc(firstCard) === getImgSrc(secondCard);
+}
+
+function changePoints(action) {
+    let user = document.querySelector('#firstPlace .currentPoint');
+    let minValue = cardCount / 2;
+    switch (action) {
+        case 'increase': {
+            let end = performance.now();
+            let time = end - timer;
+            let currentPoint = Math.ceil((cardCount * 10000) / time);
+            points += currentPoint > 0 ? currentPoint : minValue;
+            timer = performance.now();
+        }
+        case 'decrease': {
+            points -= (points >= minValue) ? minValue : 0;
+        }
+        default: {
+            user.textContent = points;
+        }
+    }
 }

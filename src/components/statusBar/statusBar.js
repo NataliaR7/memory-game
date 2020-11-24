@@ -11,9 +11,9 @@ function getNickNameComponent(params) {
 }
 
 function getRestartButtonComponent(params) {
-    return `<div id="restartButton"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width = 10px 
+    return `<div id="restartButton"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width = 5px 
     viewBox="0 0 574.058 574.058" style="enable-background:new 0 0 574.058 574.058;" xml:space="preserve">
-    <g>   <path style="fill:#010002;" d="M567.63,274.176c0,4.08-1.631,7.344-4.895,9.792c-3.672,2.448-7.549,3.06-11.629,1.836
+    <g>   <path style="fill:#434343;" d="M567.63,274.176c0,4.08-1.631,7.344-4.895,9.792c-3.672,2.448-7.549,3.06-11.629,1.836
     l-205.633-70.38c-4.896-1.632-7.754-4.896-8.566-9.792c-0.816-4.896,0.813-8.772,4.895-11.628l48.352-34.272l7.955-6.12
     c-14.279-11.424-30.293-20.298-48.041-26.622c-17.748-6.324-36.619-9.486-56.611-9.486c-23.255,0-45.186,4.488-65.79,13.464
     s-38.556,21.114-53.856,36.414c-15.3,15.3-27.438,33.252-36.414,53.856s-13.464,42.534-13.464,65.79
