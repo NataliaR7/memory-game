@@ -1,4 +1,4 @@
-export default function card(isFront = false, set = 'cardSet1', picture = '1.png') {
+export default function card(set = 'cardSet1', picture = '1.png') {
     let content = `<img class="back" src="./img/${set}/${picture}"/>`
     let content2 = `<img src="./1123.gif"/>`
     let content3 = `<img src="https://img.icons8.com/dusk/64/000000/geometric-flowers.png"/>`
