@@ -1,5 +1,5 @@
 export default function statusBar() {
-    return `${getLevelComponent()}${getNickNameComponent()}${getRestartButtonComponent()}`;
+    return `${getLevelComponent()}<div class='playerInfo'>${getNickNameComponent()}${getScoreComponent()}</div>${getRestartButtonComponent()}`;
 }
 
 function getLevelComponent(params) {
@@ -8,6 +8,10 @@ function getLevelComponent(params) {
 
 function getNickNameComponent(params) {
     return '<div id=playerName>TestUser</div>';
+}
+
+function getScoreComponent(params) {
+    return '<div class=score>0</div>';
 }
 
 function getRestartButtonComponent(params) {

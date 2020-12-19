@@ -7,10 +7,10 @@ import Game from './game';
 
 const componentList = new Map([
     ['#statusBar', StatusBar],
-    ['#leaderboard', Leaderboard],
+    // ['#leaderboard', Leaderboard],
 ]);
 
-function render(targetElement, element) {
+export default function render(targetElement, element) {
     document.querySelector(targetElement).insertAdjacentHTML('afterbegin', element());
 }
 
@@ -19,3 +19,6 @@ for (const targetElement of componentList.keys()) {
 }
 
 Game();
+
+// "socket.io": "^3.0.4",
+    // "socket.io-client": "^3.0.4",
