@@ -19,12 +19,21 @@ function routes(app) {
     app.use(cookieParser());
 
     app.get('/users', function (req, res) {
-        console.log('DIMA1');
-        sql.then((pool) => {
-            return pool.request().query('Select * from Users Order by max_score DESC');
-        })
+        const responce = getUsersForLeaderboard();
+        responce
             .then((result) => {
-                console.log(result);
+                res.json(result.recordset);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    });
+
+    app.post('/login', function (req, res) {
+        console.log(req.body);
+        const responce = getUsersForLeaderboard();
+        responce
+            .then((result) => {
                 res.json(result.recordset);
             })
             .catch((err) => {
@@ -37,26 +46,22 @@ function routes(app) {
         //res.cookie('MyCookie', req.body);
         //res.json('222');
         sql.then((pool) => {
-            return pool.request().query(`Insert [memory-game-db]..Users(username, password_hash) Values('${req.body.username}', '${req.body.password}')`);
+            return pool
+                .request()
+                .query(
+                    `Insert [memory-game-db]..Users(username, password_hash) Values('${req.body.username}', '${req.body.password}')`
+                );
         })
             .then((result) => {
                 console.log(result);
-                if(result.rowsAffected != 0) {
-                    //wss.send(JSON.stringify(result.recordset));
-                    console.log("result00000");
+                if (result.rowsAffected != 0) {
                     broadcastAllClients(wss);
                 }
-                //res.json(result.recordset);
             })
             .catch((err) => {
                 console.log(err);
             });
-
     });
-
-    // server.listen(9000, function () {
-    //     console.log('listening on localhost:9000!!!!!!!!!!!!');
-    // });
 
     const wss = new WebSocket.Server({
         port: 9001,
@@ -77,10 +82,16 @@ function routes(app) {
     });
 }
 
-function broadcastAllClients(wss) {
-    sql.then((pool) => {
+function getUsersForLeaderboard() {
+    const result = sql.then((pool) => {
         return pool.request().query('Select * from Users Order by max_score DESC');
-    }).then((result) => {
+    });
+    return result;
+}
+
+function broadcastAllClients(wss) {
+    const responce = getUsersForLeaderboard();
+    responce.then((result) => {
         wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
                 console.log('ded22222222222');

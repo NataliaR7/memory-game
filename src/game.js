@@ -33,10 +33,13 @@ function startGame() {
 }
 
 function updateLeaderboard(event) {
-    let place = document.querySelector('#leaderboard');
     console.log('Обновить на клиенте1111111');
     let users = JSON.parse(event.data);
+    fillLeaderboard(users);
+}
 
+function fillLeaderboard(users) {
+    let place = document.querySelector('#leaderboard');
     let records = [];
     for (let i = 0; i < users.length; i++) {
         records.push(record(i + 1, users[i].username, users[i].max_score));
@@ -189,4 +192,6 @@ export default function startNewGame(params) {
     timer = performance.now();
     flippedCards = [];
     startGame();
+    let response = fetch('/users');
+    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
 }

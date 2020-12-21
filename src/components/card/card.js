@@ -11,8 +11,11 @@ export default function card(set = 'cardSet1', picture = '1.png') {
     <div class = 'card-wrapper flip-right'>
     <div class = 'card'>
         ${content}
-        <div class='front'><img src="https://img.icons8.com/dusk/64/000000/geometric-flowers.png"/></div>
+    
+        <div class='front'><img src="./img/${set}/logo.png"/></div>
     </div>
     </div>
     `;
 }
+
+//<div class='front'><img src="./img/${set}/logo.png"/></div>
