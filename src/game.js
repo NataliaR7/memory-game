@@ -17,14 +17,14 @@ const connect = () => {
     return new WebSocket('ws://localhost:9001');
 };
 
-export default function start() {
+function startGame() {
     fillCardsCollection();
     let gameField = document.querySelector('#gameField');
     gameField.innerHTML = '';
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
     gameField.addEventListener('click', flipCard);
     let restartButton = document.querySelector('#restartButton');
-    restartButton.addEventListener('click', addUser/* restartGame */);
+    //restartButton.addEventListener('click', addUser/* restartGame */);
     //document.addEventListener('click', updateLeaderboard);
     if (!ws) {
         ws = connect();
@@ -115,7 +115,12 @@ function getImgSrc(card) {
 
 function flipCard(event) {
     let target = event.target.parentElement;
-    if (target.className !== 'card') return;
+    if (target.className !== 'card') {
+        target = target.parentElement;
+        if (target.className !== 'card') {
+            return;
+        }
+    }
     if (flippedCards.includes(target)) {
         return;
     }
@@ -171,9 +176,17 @@ function changePoints(action) {
 }
 
 function restartGame() {
+    // points = 0;
+    // cards = [];
+    // timer = performance.now();
+    // flippedCards = [];
+    // start();
+}
+
+export default function startNewGame(params) {
     points = 0;
     cards = [];
     timer = performance.now();
     flippedCards = [];
-    start();
+    startGame();
 }
