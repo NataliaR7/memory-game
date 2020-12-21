@@ -1,10 +1,24 @@
 import './style.less';
+import Cookies from 'js-cookie';
+
 function getGameTable(params) {
+    let level = 'levelOne';
+    switch (Cookies.get('CurrentLevel')) {
+        case '1':
+            level = 'levelOne';
+            break;
+        case '2':
+            level = 'levelTwo';
+            break;
+        case '3':
+            level = 'levelThree';
+            break;
+    }
     return `<div id="gameTable">
-    <div id="leaderboard"></div>
-    <div id="statusBar"></div>
-    <div id="gameField" class="levelOne"></div> 
-</div>`
+    <div id="leaderboard" class="leaderboard"></div>
+    <div id="statusBar" class="statusBar"></div>
+    <div id="gameField" class="${level}"></div> 
+</div>`;
 }
 
-export default getGameTable
+export default getGameTable;

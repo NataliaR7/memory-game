@@ -5,7 +5,7 @@ export default function record(number, userName, point) {
         <div class = 'userName'>${userName}</div>
         <div class = 'point'>
             <span class='currentPoint'>${point}</span>
-            <span>point<span>
+            <span>балл<span>
         </div>
     </div>
     `;

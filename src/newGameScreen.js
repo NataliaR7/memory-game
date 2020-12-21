@@ -5,22 +5,22 @@ function getNewGameScreen(params) {
     <div class='container'>
     <label for="difficulty">Сложность:</label>
     <select id="difficulty">
-        <option selected>Легкая</option>
-        <option>Средняя</option>
-        <option>Тяжелая</option>
+        <option selected>Легко</option>
+        <option>Нормально</option>
+        <option>Тяжело</option>
     </select>
     <p>Выбор шаблона карточек:</p>
     <div>
-        <input type="radio" name="cardTemplate" id="standart" selected value="Standart" />
-        <label for="standart">Стандартный</label>
+        <input type="radio" name="cardTemplate" id="standart" value="cardSet1" checked="checked" />
+        <label for="standart">Милые</label>
     </div>
     <div>
-        <input type="radio" name="cardTemplate" id="cute" value="Cute" />
-        <label for="cute">Милый</label>
+        <input type="radio" name="cardTemplate" id="cute" value="cardSet2" />
+        <label for="cute">Котэ</label>
     </div>
     <div>
-        <input type="radio" name="cardTemplate" id="gradient" value="Gradient" />
-        <label for="gradient">Градиентный</label>
+        <input type="radio" name="cardTemplate" id="gradient" value="cardSet3" />
+        <label for="gradient">Градиент</label>
     </div>
     <button type="button" class="submitButton">Начать новую игру</button>
 </form>

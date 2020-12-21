@@ -6,6 +6,7 @@ import Game from './game';
 import getLoginForm from './login';
 import getGameTable from './gameTable';
 import getNewGameScreen from './newGameScreen';
+import Cookies from 'js-cookie';
 
 const componentList = new Map([
     ['#statusBar', StatusBar],
@@ -21,18 +22,36 @@ let isGameWon = false;
 let diffSelected = false;
 
 function enterLogin() {
-    let userName = document.querySelector('#userName').value;
-    isLoggin = true;
-    // alert(userName);
-    renderPage();
+    let username = document.querySelector('#userName').value;
+    let response = fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({ username: username }),
+    });
+    response
+        .then((result) => result.json())
+        .then((res) => {
+            console.log(res);
+            if (res.length === 0) {
+                alert('Игрока с таким имененм нет!');
+                return;
+            }
+            isLoggin = true;
+            renderPage();
+        });
 }
+
+const difficulty = { 'Легко': 1, 'Нормально': 2, 'Тяжело': 3 };
 
 function applyGameTemplate() {
     let selectedDifficulty = document.querySelector('#difficulty > option:checked').value;
-    console.log(selectedDifficulty);
+    Cookies.set('CurrentLevel', difficulty[selectedDifficulty]);
+    let cardTemplate = document.querySelector('input[name="cardTemplate"]:checked').value;
+    Cookies.set('CurrentSet', cardTemplate);
     diffSelected = true;
     isGameWon = false;
-    // alert(userName);
     renderPage();
 }
 
@@ -47,6 +66,9 @@ function setLoginStage() {
     isLoggin = false;
     diffSelected = false;
     isGameWon = false;
+    Cookies.remove('CurrentUser');
+    Cookies.remove('CurrentLevel');
+    Cookies.remove('CurrentSet');
     renderPage();
 }
 
@@ -58,6 +80,13 @@ function setSelectTemplateStage() {
 }
 
 function renderPage() {
+    console.log(Cookies.get('CurrentUser'));
+    if (Cookies.get('CurrentUser')) {
+        isLoggin = true;
+    }
+    if (Cookies.get('CurrentLevel')) {
+        diffSelected = true;
+    }
     document.querySelector('#root').innerHTML = '';
     if (!isLoggin) {
         render('#root', getLoginForm);

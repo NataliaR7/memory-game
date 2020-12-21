@@ -1,9 +1,11 @@
 import card from './components/card/card';
 import leaderboard from './components/leaderboard/leaderboard';
 import record from './components/leaderboard/record';
+import Cookies from 'js-cookie';
 //import io from  'socket.io-client' ;
 
-const cardCount = 20;
+let cardCount = 20;
+let openCardCount = 0;
 let points = 0;
 let cards = [];
 let timer = performance.now();
@@ -23,13 +25,17 @@ function startGame() {
     gameField.innerHTML = '';
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
     gameField.addEventListener('click', flipCard);
-    let restartButton = document.querySelector('#restartButton');
+    //let restartButton = document.querySelector('#restartButton');
     //restartButton.addEventListener('click', addUser/* restartGame */);
     //document.addEventListener('click', updateLeaderboard);
     if (!ws) {
         ws = connect();
     }
     ws.addEventListener('message', updateLeaderboard);
+    
+    let response = fetch('/users');
+    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
+
 }
 
 function updateLeaderboard(event) {
@@ -42,11 +48,24 @@ function fillLeaderboard(users) {
     let place = document.querySelector('#leaderboard');
     let records = [];
     for (let i = 0; i < users.length; i++) {
-        records.push(record(i + 1, users[i].username, users[i].max_score));
+        records.push(record(i + 1, users[i].username, getScore(users[i])));
     }
     place.innerHTML = leaderboard(records);
 }
-//setInterval(() => updateLeaderboard(), 6000);
+
+function getScore(user) {
+    const level = Cookies.get('CurrentLevel');
+    switch (level) {
+        case '1':
+            return user.max_score_level1;
+        case '2':
+            return user.max_score_level2;
+        case '3':
+            return user.max_score_level3;
+        default:
+            return user.max_score_level1;
+    }
+}
 
 function addUser() {
     let place = document.querySelector('#leaderboard');
@@ -55,7 +74,7 @@ function addUser() {
         headers: {
             'Content-Type': 'application/json;charset=utf-8',
         },
-        body: JSON.stringify({ username: '111TEST_User', password: '222' }),
+        body: JSON.stringify({ username: '111TEST_User' }),
     });
     // response
     //     .then((result) => result.json())
@@ -69,26 +88,30 @@ function addUser() {
     //     });
 }
 
-function getUser() {
-    let response = fetch('/api', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify({ name: 'POST_DIMA' }),
-    });
-    //let response = fetch('/api');
-    response.then((result) => result.json()).then((res) => console.log(res));
-}
-
+const cardsCount = { 'cardSet1': 20, 'cardSet2': 15, 'cardSet3': 0 };
 function fillCardsCollection() {
+    const cardSet = Cookies.get('CurrentSet');
+    let set = fillSet(cardSet);
+    set = randomSort(set);
     let cardIndex = 1;
     for (let i = 1; i <= cardCount / 2; i++) {
-        cards.push(card('cardSet1', `${cardIndex}.png`));
-        cards.push(card('cardSet1', `${cardIndex}.png`));
-        cardIndex = cardIndex >= 10 ? 1 : cardIndex + 1;
+        cards.push(set[cardIndex - 1]);
+        cards.push(set[cardIndex - 1]);
+        cardIndex = cardIndex >= cardsCount[cardSet] ? 1 : cardIndex + 1;
     }
-    cards = randomSort(cards);
+    var shuffledArr = cards.sort(function(){
+        return Math.random() - 0.5;
+      });
+    cards = randomSort(shuffledArr);
+}
+
+function fillSet(cardSetName) {
+    let result = [];
+    const count = cardsCount[cardSetName];
+    for(let i = 1; i <= count; i++) {
+        result.push(card(cardSetName, `${i}.png`))
+    }
+    return result;
 }
 
 function randomSort(source) {
@@ -131,6 +154,8 @@ function flipCard(event) {
         openCard(target);
         flippedCards = [];
         changePoints('increase');
+        openCardCount += 2;
+        checkOnEnd();
         return;
     }
     clearTimeout(activeTimer);
@@ -150,6 +175,21 @@ function flipCard(event) {
             changePoints('decrease');
         }
     }, 1000);
+}
+
+function checkOnEnd() {
+    if (openCardCount !== cardCount) {
+        return;
+    }
+    let response = fetch('/users', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({ username: Cookies.get('CurrentUser'), score: points }),
+    });
+    //let response = fetch('/api');
+    //response.then((result) => result.json()).then((res) => console.log(res));
 }
 
 function isCardEquivalent(firstCard, secondCard) {
@@ -178,20 +218,31 @@ function changePoints(action) {
     score.textContent = points;
 }
 
-function restartGame() {
-    // points = 0;
-    // cards = [];
-    // timer = performance.now();
-    // flippedCards = [];
-    // start();
+function getCardCount(level) {
+    switch (level) {
+        case '1':
+            return 20;
+        case '2':
+            return 30;
+        case '3':
+            return 42;
+        default:
+            return 20;
+    }
 }
 
-export default function startNewGame(params) {
+export default function startNewGame() {
+    const currentLevel = Cookies.get('CurrentLevel');
+    cardCount = getCardCount(currentLevel);
+    openCardCount = 0;
     points = 0;
     cards = [];
     timer = performance.now();
     flippedCards = [];
+    const levelView = document.querySelector('.statusBar .gameLevel');
+    
+    levelView.textContent = 'Уровень ' + currentLevel;
+    const nameView = document.querySelector('.statusBar .playerName');
+    nameView.textContent = Cookies.get('CurrentUser');
     startGame();
-    let response = fetch('/users');
-    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
 }

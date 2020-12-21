@@ -10,7 +10,7 @@ export default function leaderboard(records) {
     if (records[1]) records[1] = wrapRecords(records[1], 'secondPlace');
     if (records[2]) records[2] = wrapRecords(records[2], 'thirdPlace');
     return `
-    <div class="head">Leaderboard</div>
+    <div class="head">ТАБЛИЦА ЛИДЕРОВ</div>
     <div class="body">${records.join('')}</div>`;
 }
 

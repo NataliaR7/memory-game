@@ -3,11 +3,11 @@ export default function statusBar() {
 }
 
 function getLevelComponent(params) {
-    return '<div id=gameLevel>Level 1</div>';
+    return '<div id="gameLevel" class="gameLevel">Уровень 1</div>';
 }
 
 function getNickNameComponent(params) {
-    return '<div id=playerName>TestUser</div>';
+    return '<div id="playerName" class="playerName">User</div>';
 }
 
 function getScoreComponent(params) {
