@@ -9,6 +9,7 @@ let cards = [];
 let timer = performance.now();
 let flippedCards = [];
 let activeTimer;
+let ws = null;
 
 const connect = () => {
     const url = `${location.origin.replace(/^http/, 'ws')}`;
@@ -23,42 +24,46 @@ export default function start() {
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
     gameField.addEventListener('click', flipCard);
     let restartButton = document.querySelector('#restartButton');
-    restartButton.addEventListener('click', restartGame);
+    restartButton.addEventListener('click', addUser/* restartGame */);
     //document.addEventListener('click', updateLeaderboard);
-
-    const ws = connect();
-    ws.addEventListener('message', getStartState);
-
-    //updateLeaderboard();
+    if (!ws) {
+        ws = connect();
+    }
+    ws.addEventListener('message', updateLeaderboard);
 }
 
-function getStartState(event) {
+function updateLeaderboard(event) {
     let place = document.querySelector('#leaderboard');
     console.log('Обновить на клиенте1111111');
     let users = JSON.parse(event.data);
-    console.log(users);
+
     let records = [];
     for (let i = 0; i < users.length; i++) {
         records.push(record(i + 1, users[i].username, users[i].max_score));
     }
-    console.log(records);
     place.innerHTML = leaderboard(records);
 }
 //setInterval(() => updateLeaderboard(), 6000);
 
-function updateLeaderboard() {
+function addUser() {
     let place = document.querySelector('#leaderboard');
-    let response = fetch('/users');
-    response
-        .then((result) => result.json())
-        .then((users) => {
-            let records = [];
-            for (let i = 0; i < users.length; i++) {
-                records.push(record(i + 1, users[i].username, users[i].max_score));
-            }
-            console.log(records);
-            place.innerHTML = leaderboard(records);
-        });
+    let response = fetch('/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({ username: '111TEST_User', password: '222' }),
+    });
+    // response
+    //     .then((result) => result.json())
+    //     .then((users) => {
+    //         let records = [];
+    //         for (let i = 0; i < users.length; i++) {
+    //             records.push(record(i + 1, users[i].username, users[i].max_score));
+    //         }
+    //         console.log(records);
+    //         place.innerHTML = leaderboard(records);
+    //     });
 }
 
 function getUser() {
@@ -125,6 +130,7 @@ function flipCard(event) {
     if (flippedCards.length >= 2) {
         flippedCards.forEach(closeCard);
         flippedCards = [];
+        changePoints('decrease');
     }
     openCard(target);
     flippedCards.push(target);
@@ -143,23 +149,25 @@ function isCardEquivalent(firstCard, secondCard) {
 }
 
 function changePoints(action) {
-    let user = document.querySelector('#firstPlace .currentPoint');
-    let minValue = cardCount / 2;
+    let score = document.querySelector('.playerInfo .score');
+    let minValue = 15;
     switch (action) {
         case 'increase': {
             let end = performance.now();
             let time = end - timer;
-            let currentPoint = Math.ceil((cardCount * 10000) / time);
-            points += currentPoint > 0 ? currentPoint : minValue;
+            console.log('time ' + time);
+            let currentPoint = Math.ceil(minValue * (10000 / time));
+            points += currentPoint > minValue ? currentPoint : minValue;
             timer = performance.now();
+            break;
         }
         case 'decrease': {
-            points -= points >= minValue ? minValue : 0;
-        }
-        default: {
-            user.textContent = points;
+            points -= points >= 1 ? 1 : points;
+            break;
         }
     }
+    console.log('aaaaa ' + points);
+    score.textContent = points;
 }
 
 function restartGame() {

@@ -32,10 +32,26 @@ function routes(app) {
             });
     });
 
-    app.post('/1', function (req, res) {
+    app.post('/users', function (req, res) {
         console.log(req.body);
-        res.cookie('MyCookie', req.body);
-        res.json('222');
+        //res.cookie('MyCookie', req.body);
+        //res.json('222');
+        sql.then((pool) => {
+            return pool.request().query(`Insert [memory-game-db]..Users(username, password_hash) Values('${req.body.username}', '${req.body.password}')`);
+        })
+            .then((result) => {
+                console.log(result);
+                if(result.rowsAffected != 0) {
+                    //wss.send(JSON.stringify(result.recordset));
+                    console.log("result00000");
+                    broadcastAllClients(wss);
+                }
+                //res.json(result.recordset);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
     });
 
     // server.listen(9000, function () {
@@ -57,17 +73,19 @@ function routes(app) {
             console.log('received: ', message);
         });
 
-        sql.then((pool) => {
-            return pool.request().query('Select * from Users Order by max_score DESC');
-        }).then((result) => {
-            console.log(result.recordset);
-            //res.json(result.recordset);
-            wss.clients.forEach(function each(client) {
-                if (client.readyState === WebSocket.OPEN) {
-                    console.log('ded22222222222');
-                    client.send(JSON.stringify(result.recordset));
-                }
-            });
+        broadcastAllClients(wss);
+    });
+}
+
+function broadcastAllClients(wss) {
+    sql.then((pool) => {
+        return pool.request().query('Select * from Users Order by max_score DESC');
+    }).then((result) => {
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                console.log('ded22222222222');
+                client.send(JSON.stringify(result.recordset));
+            }
         });
     });
 }
