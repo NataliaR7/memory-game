@@ -7,7 +7,7 @@ let timer = performance.now();
 let flippedCards = [];
 let activeTimer;
 
-export default function start() {
+function startGame() {
     fillCardsCollection();
     let gameField = document.querySelector('#gameField');
     gameField.innerHTML = '';
@@ -15,21 +15,19 @@ export default function start() {
     gameField.addEventListener('click', flipCard);
     let restartButton = document.querySelector('#restartButton');
     restartButton.addEventListener('click', restartGame);
-    document.addEventListener('click', getUser);
+    // document.addEventListener('click', getUser);
 }
 
 function getUser() {
     let response = fetch('/api', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json;charset=utf-8'
+            'Content-Type': 'application/json;charset=utf-8',
         },
-        body: JSON.stringify({name: 'POST_DIMA'})
-      });
+        body: JSON.stringify({ name: 'POST_DIMA' }),
+    });
     //let response = fetch('/api');
-    response
-    .then((result) => result.json())
-    .then(res => console.log(res));
+    response.then((result) => result.json()).then((res) => console.log(res));
 }
 
 function fillCardsCollection() {
@@ -69,7 +67,12 @@ function getImgSrc(card) {
 
 function flipCard(event) {
     let target = event.target.parentElement;
-    if (target.className !== 'card') return;
+    if (target.className !== 'card') {
+        target = target.parentElement;
+        if (target.className !== 'card') {
+            return;
+        }
+    }
     if (flippedCards.includes(target)) {
         return;
     }
@@ -122,9 +125,17 @@ function changePoints(action) {
 }
 
 function restartGame() {
+    // points = 0;
+    // cards = [];
+    // timer = performance.now();
+    // flippedCards = [];
+    // start();
+}
+
+export default function startNewGame(params) {
     points = 0;
     cards = [];
     timer = performance.now();
     flippedCards = [];
-    start();
+    startGame();
 }
