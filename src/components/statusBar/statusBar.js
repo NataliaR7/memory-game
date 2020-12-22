@@ -31,15 +31,15 @@ function getRestartButtonComponent(params) {
     c39.576,0,76.602,7.548,111.078,22.644c34.477,15.096,64.77,35.7,90.883,61.812l3.672-3.06l48.35-34.272
     c3.672-2.856,7.953-3.264,12.852-1.224c4.488,2.856,6.732,6.528,6.732,11.016L567.63,274.176z"/>
     </svg>
-    <div id="my_modal" class="modal">
-    <form action="" method="post" class ="stylizedModalForm modal_content" id="loginForm">
+    <div id="optionModal" class="modal">
+    <div class ="stylizedModalForm modal_content">
     <div class="rightFlex"><span class="close_modal_window">×</span></div>
     <div class="container">
         <input class="submitButton" type="button" id="restartButton" value="Рестарт" />
         <input class="submitButton" type="button" id="settingsButton" value="Настройки" />
         <input class="submitButton" type="button" id="exitButton" value="Выйти" />
     </div>
-</form>
+</div>
     </div>
     </div>`;
 }

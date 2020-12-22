@@ -3,7 +3,7 @@ import leaderboard from './components/leaderboard/leaderboard';
 import record from './components/leaderboard/record';
 import Cookies from 'js-cookie';
 //import io from  'socket.io-client' ;
-
+import getRandomGradient from './gradientGenerator';
 let cardCount = 20;
 let openCardCount = 0;
 let points = 0;
@@ -88,7 +88,7 @@ function addUser() {
     //     });
 }
 
-const cardsCount = { 'cardSet1': 20, 'cardSet2': 15, 'cardSet3': 0 };
+const cardsCount = { 'cardSet1': 20, 'cardSet2': 15, 'cardSet3': 15 };
 function fillCardsCollection() {
     const cardSet = Cookies.get('CurrentSet');
     let set = fillSet(cardSet);
@@ -99,7 +99,7 @@ function fillCardsCollection() {
         cards.push(set[cardIndex - 1]);
         cardIndex = cardIndex >= cardsCount[cardSet] ? 1 : cardIndex + 1;
     }
-    var shuffledArr = cards.sort(function(){
+    let shuffledArr = cards.sort(function(){
         return Math.random() - 0.5;
       });
     cards = randomSort(shuffledArr);
@@ -108,8 +108,16 @@ function fillCardsCollection() {
 function fillSet(cardSetName) {
     let result = [];
     const count = cardsCount[cardSetName];
+    console.log(cardSetName);
     for(let i = 1; i <= count; i++) {
-        result.push(card(cardSetName, `${i}.png`))
+        if (cardSetName === 'cardSet3') {
+            console.log('testGradient');
+            result.push(card(cardSetName, `${i}.png`, i, getRandomGradient())) 
+        }
+        else{
+            result.push(card(cardSetName, `${i}.png`, i))
+        }
+        
     }
     return result;
 }
@@ -135,8 +143,8 @@ function closeCard(card) {
     card.classList.remove('open');
 }
 
-function getImgSrc(card) {
-    return card.querySelector('.back').src;
+function getImgClass(card) {
+    return card.querySelector('.back').className;
 }
 
 function flipCard(event) {
@@ -193,7 +201,7 @@ function checkOnEnd() {
 }
 
 function isCardEquivalent(firstCard, secondCard) {
-    return getImgSrc(firstCard) === getImgSrc(secondCard);
+    return getImgClass(firstCard) === getImgClass(secondCard);
 }
 
 function changePoints(action) {

@@ -1,5 +1,10 @@
-export default function card(set = 'cardSet1', picture = '1.png') {
-    let content = `<img class="back" src="./img/${set}/${picture}"/>`
+export default function card(set = 'cardSet1', picture = '1.png', number, gradient) {
+    let content;
+    if (set === 'cardSet3') {
+        content = `<img class="back card${number}" style="background: ${gradient};"/>`
+    } else {
+        content = `<img class="back card${number}" src="./img/${set}/${picture}"/>`
+    }
     let content2 = `<img src="./1123.gif"/>`
     let content3 = `<img src="https://img.icons8.com/dusk/64/000000/geometric-flowers.png"/>`
     let content1 = `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"

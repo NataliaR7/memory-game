@@ -17,10 +17,6 @@ export default function render(targetElement, element) {
     document.querySelector(targetElement).insertAdjacentHTML('afterbegin', element());
 }
 
-let isLoggin = false;
-let isGameWon = false;
-let diffSelected = false;
-
 function enterLogin() {
     let username = document.querySelector('#userName').value;
     let response = fetch('/login', {
@@ -38,34 +34,25 @@ function enterLogin() {
                 alert('Игрока с таким имененм нет!');
                 return;
             }
-            isLoggin = true;
             renderPage();
         });
 }
 
-const difficulty = { 'Легко': 1, 'Нормально': 2, 'Тяжело': 3 };
+const difficulty = { Легко: 1, Нормально: 2, Тяжело: 3 };
 
 function applyGameTemplate() {
     let selectedDifficulty = document.querySelector('#difficulty > option:checked').value;
     Cookies.set('CurrentLevel', difficulty[selectedDifficulty]);
     let cardTemplate = document.querySelector('input[name="cardTemplate"]:checked').value;
     Cookies.set('CurrentSet', cardTemplate);
-    diffSelected = true;
-    isGameWon = false;
     renderPage();
 }
 
 function restartGame() {
-    isLoggin = true;
-    diffSelected = true;
-    isGameWon = false;
     renderPage();
 }
 
 function setLoginStage() {
-    isLoggin = false;
-    diffSelected = false;
-    isGameWon = false;
     Cookies.remove('CurrentUser');
     Cookies.remove('CurrentLevel');
     Cookies.remove('CurrentSet');
@@ -73,48 +60,81 @@ function setLoginStage() {
 }
 
 function setSelectTemplateStage() {
-    isLoggin = true;
-    diffSelected = false;
-    isGameWon = false;
+    Cookies.remove('CurrentLevel');
     renderPage();
 }
 
 function renderPage() {
-    console.log(Cookies.get('CurrentUser'));
-    if (Cookies.get('CurrentUser')) {
-        isLoggin = true;
-    }
-    if (Cookies.get('CurrentLevel')) {
-        diffSelected = true;
-    }
     document.querySelector('#root').innerHTML = '';
-    if (!isLoggin) {
-        render('#root', getLoginForm);
-        document.querySelector('.submitButton').addEventListener('click', enterLogin);
+    console.log(Cookies.get('CurrentUser'));
+    if (!Cookies.get('CurrentUser')) {
+        buildLoginStage();
         return;
     }
-    if (!diffSelected) {
-        render('#root', getNewGameScreen);
-        document.querySelector('.submitButton').addEventListener('click', applyGameTemplate);
+    if (!Cookies.get('CurrentLevel')) {
+        buildSettingsStage();
         return;
     }
-    if (!isGameWon) {
-        render('#root', getGameTable);
-        for (const targetElement of componentList.keys()) {
-            render(targetElement, componentList.get(targetElement));
-        }
-        setModalEvents();
-        document.querySelector('#restartButton').addEventListener('click', restartGame);
-        document.querySelector('#settingsButton').addEventListener('click', setSelectTemplateStage);
-        document.querySelector('#exitButton').addEventListener('click', setLoginStage);
+    buildPlayStage();
+}
 
-        Game();
-        return;
+// function buildPrepareStage(params) {
+//     if (Cookies.get('CurrentUser')) {
+//         buildSettingsStage();
+//     } else {
+//         buildLoginStage();
+//     }
+// }
+
+function buildLoginStage() {
+    render('#root', getLoginForm);
+    document.querySelector('#enterLoginButton').addEventListener('click', enterLogin);
+    document.querySelector('#createUserButton').addEventListener('click', createUser);
+}
+
+function buildSettingsStage() {
+    render('#root', getNewGameScreen);
+    document.querySelector('.submitButton').addEventListener('click', applyGameTemplate);
+}
+
+function createUser(params) {
+    let username = document.querySelector('#userName').value;
+    let response = fetch('/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({ username: username }),
+    });
+    response
+        .then((result) => result.json())
+        .then((res) => {
+            console.log(res);
+        });
+    enterLogin();
+}
+
+function buildPlayStage() {
+    render('#root', getGameTable);
+    for (const targetElement of componentList.keys()) {
+        render(targetElement, componentList.get(targetElement));
     }
+    setModalEvents();
+    document.querySelector('#restartButton').addEventListener('click', restartGame);
+    document.querySelector('#settingsButton').addEventListener('click', setSelectTemplateStage);
+    document.querySelector('#exitButton').addEventListener('click', setLoginStage);
+    Game();
+}
+
+function openSettingsModal() {
+    let modal = document.querySelector('#optionModal');
+    modal.innerHTML = getNewGameScreen();
+    modal.classList.add('modal_content');
+    console.log(1);
 }
 
 function setModalEvents() {
-    let modal = document.querySelector('#my_modal');
+    let modal = document.querySelector('#optionModal');
     let openModalButton = document.querySelector('#modalMenuButton');
     let closeModalButton = document.querySelector('.close_modal_window');
     openModalButton.onclick = function (event) {
@@ -125,7 +145,7 @@ function setModalEvents() {
     };
 
     closeModalButton.onclick = function () {
-        modal = document.querySelector('#my_modal');
+        modal = document.querySelector('#optionModal');
         modal.style.display = 'none';
     };
 
