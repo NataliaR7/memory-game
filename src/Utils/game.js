@@ -3,7 +3,6 @@ import leaderboard from '../components/leaderboard/leaderboard';
 import statusBar from '../components/statusBar/statusBar';
 import record from '../components/leaderboard/record';
 import Cookies from 'js-cookie';
-//import io from  'socket.io-client' ;
 import getRandomGradient from './gradientGenerator';
 
 
@@ -29,9 +28,6 @@ function startGame() {
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
     gameField.addEventListener('click', flipCard);
     
-    //let restartButton = document.querySelector('#restartButton');
-    //restartButton.addEventListener('click', addUser/* restartGame */);
-    //document.addEventListener('click', updateLeaderboard);
     if (!ws) {
         ws = connect();
     }
@@ -73,27 +69,6 @@ function getScore(user) {
         default:
             return user.max_score_level1;
     }
-}
-
-function addUser() {
-    let place = document.querySelector('#leaderboard');
-    let response = fetch('/users', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify({ username: '111TEST_User' }),
-    });
-    // response
-    //     .then((result) => result.json())
-    //     .then((users) => {
-    //         let records = [];
-    //         for (let i = 0; i < users.length; i++) {
-    //             records.push(record(i + 1, users[i].username, users[i].max_score));
-    //         }
-    //         console.log(records);
-    //         place.innerHTML = leaderboard(records);
-    //     });
 }
 
 const cardsCount = { 'cardSet1': 20, 'cardSet2': 15, 'cardSet3': 15 };
@@ -204,8 +179,6 @@ function checkOnEnd() {
         },
         body: JSON.stringify({ username: Cookies.get('CurrentUser'), score: points }),
     });
-    //let response = fetch('/api');
-    //response.then((result) => result.json()).then((res) => console.log(res));
 }
 
 function isCardEquivalent(firstCard, secondCard) {

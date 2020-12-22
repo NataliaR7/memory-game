@@ -21,7 +21,7 @@ function getNewGameScreen(params) {
     </label>
     <label class="pointerContainer">
         <input type="radio" name="cardTemplate" id="gradient" value="cardSet3" />
-        <img src="../img/cardTemplateLogo/set2.png">
+        <img src="../img/cardTemplateLogo/set3.png">
     </label>
     </div>
     <button type="button" class="submitButton">Начать новую игру</button>

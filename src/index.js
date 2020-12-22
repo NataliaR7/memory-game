@@ -1,4 +1,4 @@
-import startGame from './Utils/game';
+import startGame from './utils/game';
 import getLoginForm from './pages/login/login';
 import getGameTable from './pages/gameTable/gameTable';
 import getNewGameScreen from './pages/settings/newGameScreen';
@@ -58,6 +58,10 @@ function buildLoginStage() {
     render('#root', getLoginForm);
     document.querySelector('#enterLoginButton').addEventListener('click', enterLogin);
     document.querySelector('#createUserButton').addEventListener('click', createUser);
+    document.querySelector('#loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        enterLogin();
+    });
 }
 
 function buildSettingsStage() {
@@ -78,6 +82,10 @@ function buildPlayStage() {
 
 function createUser() {
     let username = document.querySelector('#userName').value;
+    if (username.length === 0) {
+        alert('Имя не может быть пустым');
+        return;
+    }
     let response = fetch('/users', {
         method: 'POST',
         headers: {
@@ -86,15 +94,27 @@ function createUser() {
         body: JSON.stringify({ username: username }),
     });
     response
-        .then((result) => result.json())
+        .then((result) => {
+            return result.json();
+        })
         .then((res) => {
-            console.log(res);
+            if (res.status === 409) {
+                alert('Игрок с таким имененм уже есть!');
+                return;
+            }
+            enterLogin();
+        })
+        .catch((err) => {
+            console.log(err);
         });
-    enterLogin();
 }
 
 function enterLogin() {
     let username = document.querySelector('#userName').value;
+    if (username.length === 0) {
+        alert('Имя не может быть пустым');
+        return;
+    }
     let response = fetch('/login', {
         method: 'POST',
         headers: {

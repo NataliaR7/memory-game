@@ -21,6 +21,9 @@ function routes(app) {
 
     app.get('/users', function (req, res) {
         currentLevel = req.cookies.CurrentLevel;
+        if(currentLevel.length != 1) {
+            currentLevel = '1';
+        }
         const responce = getUsersForLeaderboard();
         responce
             .then((result) => {
@@ -47,15 +50,21 @@ function routes(app) {
 
     app.post('/users', function (req, res) {
         sql.then((pool) => {
-            return pool.request().query(`Insert [memory-game-db]..Users(username) Values('${req.body.username}')`);
+            //return pool.request().query(`Insert [memory-game-db]..Users(username) Values('${req.body.username}')`);
+            const request = pool.request();
+            request.input('name', req.body.username);
+            return request.query(`Insert [memory-game-db]..Users(username) Values(@name)`);
         })
             .then((result) => {
+                res.json(result);
                 if (result.rowsAffected[0] !== 0) {
-                    broadcastAllClients(wss);
+                    //broadcastAllClients(wss);
                 }
             })
             .catch((err) => {
-                console.log(err);
+                if (err.message.includes('IX_Users')) {
+                    res.json({ status: 409 });
+                }
             });
     });
 
@@ -68,7 +77,6 @@ function routes(app) {
                 let user = result.recordset[0];
                 maxScore = getScore(user);
                 if (currentScore > maxScore) {
-                    console.log("aaaaaaaaa");
                     updateScore(req.body.score, req.body.username, wss);
                 }
             })
@@ -111,7 +119,10 @@ function getScore(user) {
 
 function getCurrentUser(username) {
     const result = sql.then((pool) => {
-        return pool.request().query(`Select * from [memory-game-db]..Users Where username = '${username}'`);
+        const request = pool.request();
+        request.input('name', username);
+        return request.query(`Select * from [memory-game-db]..Users Where username = @name`);
+        //return pool.request().query(`Select * from [memory-game-db]..Users Where username = '${username}'`);
     });
     return result;
 }
@@ -119,11 +130,12 @@ function getCurrentUser(username) {
 function updateScore(score, username, wss) {
     const result = sql
         .then((pool) => {
-            return pool
-                .request()
-                .query(
-                    `UPDATE [memory-game-db]..Users SET max_score_level${currentLevel} = ${score} WHERE username = '${username}'`
-                );
+            const request = pool.request();
+            request.input('name', username);
+            request.input('score', score);
+            return request.query(
+                `UPDATE [memory-game-db]..Users SET max_score_level${currentLevel} = @score WHERE username = @name`
+            );
         })
         .then((result) => {
             if (result.rowsAffected[0] !== 0) {
