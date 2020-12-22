@@ -10,17 +10,19 @@ function getNewGameScreen(params) {
         <option>Тяжело</option>
     </select>
     <p>Выбор шаблона карточек:</p>
-    <div>
+    <div class="templateContainer">
+    <label class="pointerContainer">
         <input type="radio" name="cardTemplate" id="standart" value="cardSet1" checked="checked" />
-        <label for="standart">Милые</label>
-    </div>
-    <div>
+        <img src="../img/cardTemplateLogo/set1.png">
+    </label>
+    <label class="pointerContainer">
         <input type="radio" name="cardTemplate" id="cute" value="cardSet2" />
-        <label for="cute">Котэ</label>
-    </div>
-    <div>
+        <img src="../img/cardTemplateLogo/set2.png">
+    </label>
+    <label class="pointerContainer">
         <input type="radio" name="cardTemplate" id="gradient" value="cardSet3" />
-        <label for="gradient">Градиент</label>
+        <img src="../img/cardTemplateLogo/set2.png">
+    </label>
     </div>
     <button type="button" class="submitButton">Начать новую игру</button>
 </form>

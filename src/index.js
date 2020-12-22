@@ -1,9 +1,8 @@
-import Game from './Utils/game';
+import startGame from './Utils/game';
 import getLoginForm from './pages/login/login';
 import getGameTable from './pages/gameTable/gameTable';
 import getNewGameScreen from './pages/settings/newGameScreen';
 import Cookies from 'js-cookie';
-
 
 const difficulty = { Легко: 1, Нормально: 2, Тяжело: 3 };
 
@@ -12,7 +11,7 @@ function applyGameTemplate() {
     Cookies.set('CurrentLevel', difficulty[selectedDifficulty]);
     let cardTemplate = document.querySelector('input[name="cardTemplate"]:checked').value;
     Cookies.set('CurrentSet', cardTemplate);
-    renderPage();
+    getCurrentState();
 }
 
 export default function render(targetElement, element) {
@@ -20,7 +19,7 @@ export default function render(targetElement, element) {
 }
 
 function restartGame() {
-    renderPage();
+    getCurrentState();
 }
 
 // redirect
@@ -29,17 +28,17 @@ function redirectToLoginStage() {
     Cookies.remove('CurrentUser');
     Cookies.remove('CurrentLevel');
     Cookies.remove('CurrentSet');
-    renderPage();
+    getCurrentState();
 }
 
 function redirectToSelectTemplateStage() {
     Cookies.remove('CurrentLevel');
-    renderPage();
+    getCurrentState();
 }
 
 // state machine
 
-function renderPage() {
+function getCurrentState() {
     document.querySelector('#root').innerHTML = '';
     console.log(Cookies.get('CurrentUser'));
     if (!Cookies.get('CurrentUser')) {
@@ -68,7 +67,7 @@ function buildSettingsStage() {
 
 function buildPlayStage() {
     render('#root', getGameTable);
-    Game();
+    startGame();
     setModalEvents();
     document.querySelector('#restartButton').addEventListener('click', restartGame);
     document.querySelector('#settingsButton').addEventListener('click', redirectToSelectTemplateStage);
@@ -111,7 +110,7 @@ function enterLogin() {
                 alert('Игрока с таким имененм нет!');
                 return;
             }
-            renderPage();
+            getCurrentState();
         });
 }
 
@@ -140,4 +139,4 @@ function setModalEvents() {
     };
 }
 
-renderPage();
+getCurrentState();
