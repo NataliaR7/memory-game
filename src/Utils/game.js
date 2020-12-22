@@ -1,9 +1,12 @@
-import card from './components/card/card';
-import leaderboard from './components/leaderboard/leaderboard';
-import record from './components/leaderboard/record';
+import card from '../components/card/card';
+import leaderboard from '../components/leaderboard/leaderboard';
+import statusBar from '../components/statusBar/statusBar';
+import record from '../components/leaderboard/record';
 import Cookies from 'js-cookie';
 //import io from  'socket.io-client' ;
 import getRandomGradient from './gradientGenerator';
+
+
 let cardCount = 20;
 let openCardCount = 0;
 let points = 0;
@@ -25,6 +28,7 @@ function startGame() {
     gameField.innerHTML = '';
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
     gameField.addEventListener('click', flipCard);
+    
     //let restartButton = document.querySelector('#restartButton');
     //restartButton.addEventListener('click', addUser/* restartGame */);
     //document.addEventListener('click', updateLeaderboard);
@@ -51,6 +55,10 @@ function fillLeaderboard(users) {
         records.push(record(i + 1, users[i].username, getScore(users[i])));
     }
     place.innerHTML = leaderboard(records);
+}
+
+function insertStatusBar() {
+    document.querySelector('#statusBar').insertAdjacentHTML('afterbegin', statusBar());
 }
 
 function getScore(user) {
@@ -247,6 +255,7 @@ export default function startNewGame() {
     cards = [];
     timer = performance.now();
     flippedCards = [];
+    insertStatusBar();
     const levelView = document.querySelector('.statusBar .gameLevel');
     
     levelView.textContent = 'Уровень ' + currentLevel;

@@ -1,7 +1,7 @@
 export default function card(set = 'cardSet1', picture = '1.png', number, gradient) {
     let content;
     if (set === 'cardSet3') {
-        content = `<img class="back card${number}" style="background: ${gradient};"/>`
+        content = `<img class="back card${number}" style="${gradient};"/>`
     } else {
         content = `<img class="back card${number}" src="./img/${set}/${picture}"/>`
     }

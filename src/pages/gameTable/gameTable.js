@@ -1,4 +1,4 @@
-import './style.less';
+import './gameTable.less';
 import Cookies from 'js-cookie';
 
 function getGameTable(params) {

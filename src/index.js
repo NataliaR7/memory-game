@@ -1,20 +1,97 @@
-import StatusBar from './components/statusBar/statusBar';
-import Leaderboard from './components/leaderboard/leaderboard';
-import GameField from './components/gameField/gamefield';
-import Card from './components/card/card';
-import Game from './game';
-import getLoginForm from './login';
-import getGameTable from './gameTable';
-import getNewGameScreen from './newGameScreen';
+import Game from './Utils/game';
+import getLoginForm from './pages/login/login';
+import getGameTable from './pages/gameTable/gameTable';
+import getNewGameScreen from './pages/settings/newGameScreen';
 import Cookies from 'js-cookie';
 
-const componentList = new Map([
-    ['#statusBar', StatusBar],
-    // ['#leaderboard', Leaderboard],
-]);
+
+const difficulty = { Легко: 1, Нормально: 2, Тяжело: 3 };
+
+function applyGameTemplate() {
+    let selectedDifficulty = document.querySelector('#difficulty > option:checked').value;
+    Cookies.set('CurrentLevel', difficulty[selectedDifficulty]);
+    let cardTemplate = document.querySelector('input[name="cardTemplate"]:checked').value;
+    Cookies.set('CurrentSet', cardTemplate);
+    renderPage();
+}
 
 export default function render(targetElement, element) {
     document.querySelector(targetElement).insertAdjacentHTML('afterbegin', element());
+}
+
+function restartGame() {
+    renderPage();
+}
+
+// redirect
+
+function redirectToLoginStage() {
+    Cookies.remove('CurrentUser');
+    Cookies.remove('CurrentLevel');
+    Cookies.remove('CurrentSet');
+    renderPage();
+}
+
+function redirectToSelectTemplateStage() {
+    Cookies.remove('CurrentLevel');
+    renderPage();
+}
+
+// state machine
+
+function renderPage() {
+    document.querySelector('#root').innerHTML = '';
+    console.log(Cookies.get('CurrentUser'));
+    if (!Cookies.get('CurrentUser')) {
+        buildLoginStage();
+        return;
+    }
+    if (!Cookies.get('CurrentLevel')) {
+        buildSettingsStage();
+        return;
+    }
+    buildPlayStage();
+}
+
+// build
+
+function buildLoginStage() {
+    render('#root', getLoginForm);
+    document.querySelector('#enterLoginButton').addEventListener('click', enterLogin);
+    document.querySelector('#createUserButton').addEventListener('click', createUser);
+}
+
+function buildSettingsStage() {
+    render('#root', getNewGameScreen);
+    document.querySelector('.submitButton').addEventListener('click', applyGameTemplate);
+}
+
+function buildPlayStage() {
+    render('#root', getGameTable);
+    Game();
+    setModalEvents();
+    document.querySelector('#restartButton').addEventListener('click', restartGame);
+    document.querySelector('#settingsButton').addEventListener('click', redirectToSelectTemplateStage);
+    document.querySelector('#exitButton').addEventListener('click', redirectToLoginStage);
+}
+
+// user actions
+
+function createUser() {
+    let username = document.querySelector('#userName').value;
+    let response = fetch('/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({ username: username }),
+    });
+    response
+        .then((result) => result.json())
+        .then((res) => {
+            console.log(res);
+        });
+    enterLogin();
 }
 
 function enterLogin() {
@@ -38,100 +115,7 @@ function enterLogin() {
         });
 }
 
-const difficulty = { Легко: 1, Нормально: 2, Тяжело: 3 };
-
-function applyGameTemplate() {
-    let selectedDifficulty = document.querySelector('#difficulty > option:checked').value;
-    Cookies.set('CurrentLevel', difficulty[selectedDifficulty]);
-    let cardTemplate = document.querySelector('input[name="cardTemplate"]:checked').value;
-    Cookies.set('CurrentSet', cardTemplate);
-    renderPage();
-}
-
-function restartGame() {
-    renderPage();
-}
-
-function setLoginStage() {
-    Cookies.remove('CurrentUser');
-    Cookies.remove('CurrentLevel');
-    Cookies.remove('CurrentSet');
-    renderPage();
-}
-
-function setSelectTemplateStage() {
-    Cookies.remove('CurrentLevel');
-    renderPage();
-}
-
-function renderPage() {
-    document.querySelector('#root').innerHTML = '';
-    console.log(Cookies.get('CurrentUser'));
-    if (!Cookies.get('CurrentUser')) {
-        buildLoginStage();
-        return;
-    }
-    if (!Cookies.get('CurrentLevel')) {
-        buildSettingsStage();
-        return;
-    }
-    buildPlayStage();
-}
-
-// function buildPrepareStage(params) {
-//     if (Cookies.get('CurrentUser')) {
-//         buildSettingsStage();
-//     } else {
-//         buildLoginStage();
-//     }
-// }
-
-function buildLoginStage() {
-    render('#root', getLoginForm);
-    document.querySelector('#enterLoginButton').addEventListener('click', enterLogin);
-    document.querySelector('#createUserButton').addEventListener('click', createUser);
-}
-
-function buildSettingsStage() {
-    render('#root', getNewGameScreen);
-    document.querySelector('.submitButton').addEventListener('click', applyGameTemplate);
-}
-
-function createUser(params) {
-    let username = document.querySelector('#userName').value;
-    let response = fetch('/users', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify({ username: username }),
-    });
-    response
-        .then((result) => result.json())
-        .then((res) => {
-            console.log(res);
-        });
-    enterLogin();
-}
-
-function buildPlayStage() {
-    render('#root', getGameTable);
-    for (const targetElement of componentList.keys()) {
-        render(targetElement, componentList.get(targetElement));
-    }
-    setModalEvents();
-    document.querySelector('#restartButton').addEventListener('click', restartGame);
-    document.querySelector('#settingsButton').addEventListener('click', setSelectTemplateStage);
-    document.querySelector('#exitButton').addEventListener('click', setLoginStage);
-    Game();
-}
-
-function openSettingsModal() {
-    let modal = document.querySelector('#optionModal');
-    modal.innerHTML = getNewGameScreen();
-    modal.classList.add('modal_content');
-    console.log(1);
-}
+// modal
 
 function setModalEvents() {
     let modal = document.querySelector('#optionModal');
