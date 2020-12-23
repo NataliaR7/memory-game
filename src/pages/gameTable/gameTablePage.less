@@ -1,0 +1,49 @@
+#gameTable {
+    display: grid;
+    grid-template: ~'1fr 8fr / 1fr 2.9fr';
+    height: 90vh;
+    width: 75vw;
+    margin: 0 auto;
+    padding-top: 5vh;
+    column-gap: 5%;
+
+    #leaderboard {
+        grid-row: 2;
+        grid-column: 1;
+        background: rgb(255, 255, 255);
+        border: 1px solid rgba(67, 67, 67, 0.5);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    #gameField {
+        display: grid;
+        grid-row: 2;
+        grid-column: 2;
+        gap: 1%;
+    }
+
+    @media (max-width: 1300px) {
+        #gameTable {
+            width: 90vw;
+        }
+    }
+
+    #statusBar {
+        display: flex;
+        margin: 0 20% 4% 20%;
+        grid-row: 1;
+        grid-column: 2;
+        font-size: 14px;
+    }
+
+    .levelOne {
+        grid-template: ~'repeat(4, 1fr) / repeat(5, 1fr)';
+    }
+    .levelTwo {
+        grid-template: ~'repeat(5, 1fr) / repeat(6, 1fr)';
+    }
+    .levelThree {
+        grid-template: ~'repeat(6, 1fr) / repeat(7, 1fr)';
+    }
+}

@@ -1,7 +1,8 @@
+import './style.less';
 import startGame from './utils/game';
-import getLoginForm from './pages/login/login';
-import getGameTable from './pages/gameTable/gameTable';
-import getNewGameScreen from './pages/settings/newGameScreen';
+import getLoginForm from './pages/login/loginPage';
+import getGameTablePage from './pages/gameTable/gameTablePage';
+import getSettingsPage from './pages/settings/settingsPage';
 import Cookies from 'js-cookie';
 
 const difficulty = { Легко: 1, Нормально: 2, Тяжело: 3 };
@@ -65,12 +66,12 @@ function buildLoginStage() {
 }
 
 function buildSettingsStage() {
-    render('#root', getNewGameScreen);
+    render('#root', getSettingsPage);
     document.querySelector('.submitButton').addEventListener('click', applyGameTemplate);
 }
 
 function buildPlayStage() {
-    render('#root', getGameTable);
+    render('#root', getGameTablePage);
     startGame();
     setModalEvents();
     document.querySelector('#restartButton').addEventListener('click', restartGame);
@@ -81,9 +82,9 @@ function buildPlayStage() {
 // user actions
 
 function createUser() {
-    let username = document.querySelector('#userName').value;
+    let username = document.querySelector('#userNameInput').value;
     if (username.length === 0) {
-        alert('Имя не может быть пустым');
+        drawValidationWarning('Имя не может быть пустым');
         return;
     }
     let response = fetch('/users', {
@@ -99,7 +100,7 @@ function createUser() {
         })
         .then((res) => {
             if (res.status === 409) {
-                alert('Игрок с таким имененм уже есть!');
+                drawValidationWarning('Игрок с таким имененм уже есть!');
                 return;
             }
             enterLogin();
@@ -110,9 +111,9 @@ function createUser() {
 }
 
 function enterLogin() {
-    let username = document.querySelector('#userName').value;
+    let username = document.querySelector('#userNameInput').value;
     if (username.length === 0) {
-        alert('Имя не может быть пустым');
+        drawValidationWarning('Имя не может быть пустым');
         return;
     }
     let response = fetch('/login', {
@@ -127,11 +128,24 @@ function enterLogin() {
         .then((res) => {
             console.log(res);
             if (res.length === 0) {
-                alert('Игрока с таким имененм нет!');
+                drawValidationWarning('Игрока с таким именен нет!');
+                // alert('Игрока с таким имененм нет!');
                 return;
             }
             getCurrentState();
         });
+}
+
+function drawValidationWarning(message) {
+    let input = document.querySelector('#userNameInput');
+    let validationWarningElem = document.querySelector('#ValidationWarning');
+    if (validationWarningElem) {
+        validationWarningElem.remove();
+    }
+    let warningText = `<span id="ValidationWarning" style="margin: 0 auto">${message}</span>`;
+    input.insertAdjacentHTML('afterend', warningText);
+    input.style.borderStyle = 'solid';
+    input.style.borderColor = 'red';
 }
 
 // modal

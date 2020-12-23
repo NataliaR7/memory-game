@@ -1,6 +1,6 @@
-import './newGameScreenStyle.less';
+import './settingsPage.less';
 
-function getNewGameScreen(params) {
+function getSettingsPage() {
     return `<form id="newGameForm" class="stylizedForm">
     <div class='container'>
     <label for="difficulty">Сложность:</label>
@@ -29,4 +29,4 @@ function getNewGameScreen(params) {
 </div>`
 }
 
-export default getNewGameScreen
+export default getSettingsPage
