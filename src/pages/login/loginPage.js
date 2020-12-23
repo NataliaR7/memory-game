@@ -2,7 +2,7 @@ import './loginPage.less';
 
 function getLoginForm() {
     return `<form action="" method="post" class ="stylizedForm" id="loginForm">
-    <div class="container">
+    <div class="contentContainer">
         <label for="userNameInput">Введите ваше имя</label>
         <input type="text" class="nameInput" name="" id="userNameInput" />
         <div class="remoteButtonsContainer">

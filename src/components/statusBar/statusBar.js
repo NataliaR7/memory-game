@@ -20,7 +20,7 @@ function getRestartButtonComponent(params) {
     <div id="optionModal" class="modal">
     <div class ="stylizedModalForm modal_content">
     <div class="rightFlex"><span class="close_modal_window">×</span></div>
-    <div class="container">
+    <div class="contentContainer">
         <input class="submitButton" type="button" id="restartButton" value="Заново" />
         <input class="submitButton" type="button" id="settingsButton" value="Настройки" />
         <input class="submitButton" type="button" id="exitButton" value="Выйти" />

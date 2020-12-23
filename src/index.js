@@ -136,18 +136,6 @@ function enterLogin() {
         });
 }
 
-function drawValidationWarning(message) {
-    let input = document.querySelector('#userNameInput');
-    let validationWarningElem = document.querySelector('#ValidationWarning');
-    if (validationWarningElem) {
-        validationWarningElem.remove();
-    }
-    let warningText = `<span id="ValidationWarning" style="margin: 0 auto">${message}</span>`;
-    input.insertAdjacentHTML('afterend', warningText);
-    input.style.borderStyle = 'solid';
-    input.style.borderColor = 'red';
-}
-
 // modal
 
 function setModalEvents() {
@@ -171,6 +159,20 @@ function setModalEvents() {
             modal.style.display = 'none';
         }
     };
+}
+
+// validation
+
+function drawValidationWarning(message) {
+    let input = document.querySelector('#userNameInput');
+    let validationWarningElem = document.querySelector('#ValidationWarning');
+    if (validationWarningElem) {
+        validationWarningElem.remove();
+    }
+    let warningText = `<span id="ValidationWarning" style="margin: 0 auto">${message}</span>`;
+    input.insertAdjacentHTML('afterend', warningText);
+    input.style.borderStyle = 'solid';
+    input.style.borderColor = 'red';
 }
 
 getCurrentState();

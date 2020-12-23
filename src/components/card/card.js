@@ -9,11 +9,8 @@ export default function card(set = 'cardSet1', picture = '1.png', number, gradie
     <div class = 'card-wrapper flip-right'>
     <div class = 'card'>
         ${content}
-    
         <div class='front'><img class="logo" alt="logo" src="./img/${set}/logo.png"/></div>
     </div>
     </div>
     `;
 }
-
-//<div class='front'><img src="./img/${set}/logo.png"/></div>
