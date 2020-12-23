@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const WebSocket = require('ws');
 
 let currentLevel = '1';
 let sql = null;

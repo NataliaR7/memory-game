@@ -8,11 +8,10 @@ let ws = null;
 
 export default function startNewGame() {
     resetParameters();
+    connectWebSocket();
     buildStatusBar();
     buildGameField();
-    connectWebSocket();
-    let response = fetch('/users');
-    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
+    onEnterUpdate();
 }
 
 function buildStatusBar() {
@@ -31,6 +30,11 @@ function buildGameField() {
     gameField.addEventListener('click', flipCard);
 }
 
+function onEnterUpdate() {
+    let response = fetch('/users');
+    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
+}
+
 function connectWebSocket() {
     if (!ws) {
         ws = new WebSocket('ws://localhost:9001');
@@ -45,6 +49,7 @@ function updateLeaderboard(event) {
 }
 
 function fillLeaderboard(users) {
+    console.log(users);
     let place = document.querySelector('#leaderboard');
     let records = [];
     for (let i = 0; i < users.length; i++) {
