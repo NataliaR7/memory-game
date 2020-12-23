@@ -9,7 +9,7 @@ function getSettingsPage() {
         <option>Нормально</option>
         <option>Тяжело</option>
     </select>
-    <p>Выбор шаблона карточек:</p>
+    <p>Шаблоны карточек:</p>
     <div class="templateContainer">
     <label class="pointerContainer">
         <input type="radio" name="cardTemplate" id="standart" value="cardSet1" checked="checked" />
@@ -24,7 +24,7 @@ function getSettingsPage() {
         <img src="../img/cardTemplateLogo/set3.png">
     </label>
     </div>
-    <button type="button" class="submitButton">Начать новую игру</button>
+    <button type="button" class="submitButton">Начать</button>
 </form>
 </div>`
 }

@@ -1,41 +1,41 @@
-import card from '../components/card/card';
 import leaderboard from '../components/leaderboard/leaderboard';
 import statusBar from '../components/statusBar/statusBar';
 import record from '../components/leaderboard/record';
 import Cookies from 'js-cookie';
-import getRandomGradient from './gradientGenerator';
+import {fillCardsCollection, resetParameters, flipCard} from './cardLogic.js';
 
-
-let cardCount = 20;
-let openCardCount = 0;
-let points = 0;
-let cards = [];
-let timer = performance.now();
-let flippedCards = [];
-let activeTimer;
 let ws = null;
 
-const connect = () => {
-    const url = `${location.origin.replace(/^http/, 'ws')}`;
-    console.log(url);
-    return new WebSocket('ws://localhost:9001');
-};
+export default function startNewGame() {
+    resetParameters();
+    buildStatusBar();
+    buildGameField();
+    connectWebSocket();
+    let response = fetch('/users');
+    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
+}
 
-function startGame() {
-    fillCardsCollection();
+function buildStatusBar() {
+    document.querySelector('#statusBar').insertAdjacentHTML('afterbegin', statusBar());
+    const levelView = document.querySelector('.statusBar .gameLevel');
+    levelView.textContent = 'Уровень ' + Cookies.get('CurrentLevel');
+    const nameView = document.querySelector('.statusBar .playerName');
+    nameView.textContent = Cookies.get('CurrentUser');
+}
+
+function buildGameField() {
+    const cards = fillCardsCollection();
     let gameField = document.querySelector('#gameField');
     gameField.innerHTML = '';
     gameField.insertAdjacentHTML('beforeend', cards.join(''));
     gameField.addEventListener('click', flipCard);
-    
+}
+
+function connectWebSocket() {
     if (!ws) {
-        ws = connect();
+        ws = new WebSocket('ws://localhost:9001');
     }
     ws.addEventListener('message', updateLeaderboard);
-    
-    let response = fetch('/users');
-    response.then((result) => result.json()).then((users) => fillLeaderboard(users));
-
 }
 
 function updateLeaderboard(event) {
@@ -53,10 +53,6 @@ function fillLeaderboard(users) {
     place.innerHTML = leaderboard(records);
 }
 
-function insertStatusBar() {
-    document.querySelector('#statusBar').insertAdjacentHTML('afterbegin', statusBar());
-}
-
 function getScore(user) {
     const level = Cookies.get('CurrentLevel');
     switch (level) {
@@ -71,168 +67,3 @@ function getScore(user) {
     }
 }
 
-const cardsCount = { 'cardSet1': 20, 'cardSet2': 15, 'cardSet3': 15 };
-function fillCardsCollection() {
-    const cardSet = Cookies.get('CurrentSet');
-    let set = fillSet(cardSet);
-    set = randomSort(set);
-    let cardIndex = 1;
-    for (let i = 1; i <= cardCount / 2; i++) {
-        cards.push(set[cardIndex - 1]);
-        cards.push(set[cardIndex - 1]);
-        cardIndex = cardIndex >= cardsCount[cardSet] ? 1 : cardIndex + 1;
-    }
-    let shuffledArr = cards.sort(function(){
-        return Math.random() - 0.5;
-      });
-    cards = randomSort(shuffledArr);
-}
-
-function fillSet(cardSetName) {
-    let result = [];
-    const count = cardsCount[cardSetName];
-    console.log(cardSetName);
-    for(let i = 1; i <= count; i++) {
-        if (cardSetName === 'cardSet3') {
-            console.log('testGradient');
-            result.push(card(cardSetName, `${i}.png`, i, getRandomGradient())) 
-        }
-        else{
-            result.push(card(cardSetName, `${i}.png`, i))
-        }
-        
-    }
-    return result;
-}
-
-function randomSort(source) {
-    let j,
-        temp = 0;
-    let result = source.slice();
-    for (let i = result.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        temp = result[j];
-        result[j] = result[i];
-        result[i] = temp;
-    }
-    return result;
-}
-
-function openCard(card) {
-    card.classList.add('open');
-}
-
-function closeCard(card) {
-    card.classList.remove('open');
-}
-
-function getImgClass(card) {
-    return card.querySelector('.back').className;
-}
-
-function flipCard(event) {
-    let target = event.target.parentElement;
-    if (target.className !== 'card') {
-        target = target.parentElement;
-        if (target.className !== 'card') {
-            return;
-        }
-    }
-    if (flippedCards.includes(target)) {
-        return;
-    }
-    if (flippedCards.length === 1 && isCardEquivalent(flippedCards[0], target)) {
-        openCard(target);
-        flippedCards = [];
-        changePoints('increase');
-        openCardCount += 2;
-        checkOnEnd();
-        return;
-    }
-    clearTimeout(activeTimer);
-
-    if (flippedCards.length >= 2) {
-        flippedCards.forEach(closeCard);
-        flippedCards = [];
-        changePoints('decrease');
-    }
-    openCard(target);
-    flippedCards.push(target);
-
-    activeTimer = setTimeout(() => {
-        if (flippedCards.length === 2) {
-            flippedCards.forEach(closeCard);
-            flippedCards = [];
-            changePoints('decrease');
-        }
-    }, 1000);
-}
-
-function checkOnEnd() {
-    if (openCardCount !== cardCount) {
-        return;
-    }
-    let response = fetch('/users', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify({ username: Cookies.get('CurrentUser'), score: points }),
-    });
-}
-
-function isCardEquivalent(firstCard, secondCard) {
-    return getImgClass(firstCard) === getImgClass(secondCard);
-}
-
-function changePoints(action) {
-    let score = document.querySelector('.playerInfo .score');
-    let minValue = 15;
-    switch (action) {
-        case 'increase': {
-            let end = performance.now();
-            let time = end - timer;
-            console.log('time ' + time);
-            let currentPoint = Math.ceil(minValue * (10000 / time));
-            points += currentPoint > minValue ? currentPoint : minValue;
-            timer = performance.now();
-            break;
-        }
-        case 'decrease': {
-            points -= points >= 1 ? 1 : points;
-            break;
-        }
-    }
-    console.log('aaaaa ' + points);
-    score.textContent = points;
-}
-
-function getCardCount(level) {
-    switch (level) {
-        case '1':
-            return 20;
-        case '2':
-            return 30;
-        case '3':
-            return 42;
-        default:
-            return 20;
-    }
-}
-
-export default function startNewGame() {
-    const currentLevel = Cookies.get('CurrentLevel');
-    cardCount = getCardCount(currentLevel);
-    openCardCount = 0;
-    points = 0;
-    cards = [];
-    timer = performance.now();
-    flippedCards = [];
-    insertStatusBar();
-    const levelView = document.querySelector('.statusBar .gameLevel');
-    
-    levelView.textContent = 'Уровень ' + currentLevel;
-    const nameView = document.querySelector('.statusBar .playerName');
-    nameView.textContent = Cookies.get('CurrentUser');
-    startGame();
-}

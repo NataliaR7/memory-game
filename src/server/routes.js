@@ -1,27 +1,17 @@
-const db = require('mssql');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const WebSocket = require('ws');
 
-const configDB = {
-    user: 'MG_login',
-    password: '123',
-    server: 'localhost',
-    database: 'memory-game-db',
-};
-
-const sql = db.connect(configDB);
 let currentLevel = '1';
+let sql = null;
 
-function routes(app) {
-    //const server = require('http').createServer(app);
-
+function routes(app, sqlConnect, wss) {
+    sql = sqlConnect;
     app.use(bodyParser.json());
     app.use(cookieParser());
 
     app.get('/users', function (req, res) {
         currentLevel = req.cookies.CurrentLevel;
-        if(currentLevel.length != 1) {
+        if (currentLevel.length != 1) {
             currentLevel = '1';
         }
         const responce = getUsersForLeaderboard();
@@ -36,7 +26,8 @@ function routes(app) {
 
     app.post('/login', function (req, res) {
         const username = req.body.username;
-        getCurrentUser(username)
+        const responce = getCurrentUser(username);
+        responce
             .then((result) => {
                 if (result.rowsAffected[0] !== 0) {
                     res.cookie('CurrentUser', username);
@@ -50,16 +41,12 @@ function routes(app) {
 
     app.post('/users', function (req, res) {
         sql.then((pool) => {
-            //return pool.request().query(`Insert [memory-game-db]..Users(username) Values('${req.body.username}')`);
             const request = pool.request();
             request.input('name', req.body.username);
             return request.query(`Insert [memory-game-db]..Users(username) Values(@name)`);
         })
             .then((result) => {
                 res.json(result);
-                if (result.rowsAffected[0] !== 0) {
-                    //broadcastAllClients(wss);
-                }
             })
             .catch((err) => {
                 if (err.message.includes('IX_Users')) {
@@ -84,23 +71,22 @@ function routes(app) {
                 console.log(err);
             });
     });
+}
 
-    const wss = new WebSocket.Server({
-        port: 9001,
-        noServer: true,
+function getUsersForLeaderboard() {
+    const result = sql.then((pool) => {
+        return pool
+            .request()
+            .query(`Select * from [memory-game-db]..Users Order by max_score_level${currentLevel} DESC`);
     });
+    return result;
+}
 
-    wss.on('connection', function connection(ws) {
-        // ws.on('message', function incoming(message) {
-        //   ws.send(JSON.stringify(message));
-        // });
-        console.log('CONNECT!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-        ws.on('message', function incoming(data) {
-            console.log('ОТВЕТ');
-            console.log('received: ', message);
-        });
-
-        broadcastAllClients(wss);
+function getCurrentUser(username) {
+    return sql.then((pool) => {
+        const request = pool.request();
+        request.input('name', username);
+        return request.query(`Select * from [memory-game-db]..Users Where username = @name`);
     });
 }
 
@@ -115,16 +101,6 @@ function getScore(user) {
         default:
             return user.max_score_level1;
     }
-}
-
-function getCurrentUser(username) {
-    const result = sql.then((pool) => {
-        const request = pool.request();
-        request.input('name', username);
-        return request.query(`Select * from [memory-game-db]..Users Where username = @name`);
-        //return pool.request().query(`Select * from [memory-game-db]..Users Where username = '${username}'`);
-    });
-    return result;
 }
 
 function updateScore(score, username, wss) {
@@ -148,15 +124,6 @@ function updateScore(score, username, wss) {
     return result;
 }
 
-function getUsersForLeaderboard() {
-    const result = sql.then((pool) => {
-        return pool
-            .request()
-            .query(`Select * from [memory-game-db]..Users Order by max_score_level${currentLevel} DESC`);
-    });
-    return result;
-}
-
 function broadcastAllClients(wss) {
     const responce = getUsersForLeaderboard();
     responce.then((result) => {
@@ -169,4 +136,5 @@ function broadcastAllClients(wss) {
     });
 }
 
-module.exports = routes;
+exports.routes = routes;
+exports.broadcastAllClients = broadcastAllClients;

@@ -1,5 +1,5 @@
 const path = require('path');
-const server = require('./src/server');
+const server = require('./src/server/server.js');
 
 module.exports = {
     entry: [/* 'webpack-dev-server/client?http://localhost:9000', */ /* 'webpack/hot/only-dev-server', */ './src/index.js'],
