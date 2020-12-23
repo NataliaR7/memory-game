@@ -22,13 +22,9 @@ function connectWebSocket() {
         noServer: true,
     });
 
-    wss.on('connection', function connection(ws) {
-        console.log('CONNECT');
+    wss.on('connection', function connection() {
         broadcastAllClients(wss);
     });
 }
-
-
-
 
 module.exports = server;

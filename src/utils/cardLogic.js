@@ -99,25 +99,25 @@ export function flipCard(event) {
     }
 
     if (flippedCards.length === 1 && isCardEquivalent(flippedCards[0], target)) {
-        winStep(target);
+        applyWinStep(target);
         return;
     }
     clearTimeout(activeTimer);
 
     if (flippedCards.length >= 2) {
-        loseStep();
+        applyLoseStep();
     }
     openCard(target);
     flippedCards.push(target);
 
     activeTimer = setTimeout(() => {
         if (flippedCards.length === 2) {
-            loseStep();
+            applyLoseStep();
         }
     }, 1000);
 }
 
-function winStep(target) {
+function applyWinStep(target) {
     openCard(target);
     flippedCards = [];
     changePoints(shift.increase);
@@ -125,7 +125,7 @@ function winStep(target) {
     checkOnEnd();
 }
 
-function loseStep() {
+function applyLoseStep() {
     flippedCards.forEach(closeCard);
     flippedCards = [];
     changePoints(shift.decrease);

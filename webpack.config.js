@@ -2,7 +2,7 @@ const path = require('path');
 const server = require('./src/server/server.js');
 
 module.exports = {
-    entry: [/* 'webpack-dev-server/client?http://localhost:9000', */ /* 'webpack/hot/only-dev-server', */ './src/index.js'],
+    entry: ['./src/index.js'],
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
@@ -14,7 +14,6 @@ module.exports = {
         compress: true,
         host: 'localhost',
         port: 9000,
-        //transportMode: 'ws',
         before: (app) => {
             server(app);
         },
@@ -39,6 +38,5 @@ module.exports = {
                 },
             },
         ],
-    },
-    //externals: ["ws", "socket.io"],
+    }
 };

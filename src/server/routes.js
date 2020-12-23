@@ -130,7 +130,6 @@ function broadcastAllClients(wss) {
     responce.then((result) => {
         wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
-                console.log('ded22222222222');
                 client.send(JSON.stringify(result.recordset));
             }
         });

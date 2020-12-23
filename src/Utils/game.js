@@ -43,13 +43,11 @@ function connectWebSocket() {
 }
 
 function updateLeaderboard(event) {
-    console.log('Обновить на клиенте1111111');
     let users = JSON.parse(event.data);
     fillLeaderboard(users);
 }
 
 function fillLeaderboard(users) {
-    console.log(users);
     let place = document.querySelector('#leaderboard');
     let records = [];
     for (let i = 0; i < users.length; i++) {

@@ -23,8 +23,6 @@ function restartGame() {
     getCurrentState();
 }
 
-// redirect
-
 function redirectToLoginStage() {
     Cookies.remove('CurrentUser');
     Cookies.remove('CurrentLevel');
@@ -37,11 +35,8 @@ function redirectToSelectTemplateStage() {
     getCurrentState();
 }
 
-// state machine
-
 function getCurrentState() {
     document.querySelector('#root').innerHTML = '';
-    console.log(Cookies.get('CurrentUser'));
     if (!Cookies.get('CurrentUser')) {
         buildLoginStage();
         return;
@@ -52,8 +47,6 @@ function getCurrentState() {
     }
     buildPlayStage();
 }
-
-// build
 
 function buildLoginStage() {
     render('#root', getLoginForm);
@@ -78,8 +71,6 @@ function buildPlayStage() {
     document.querySelector('#settingsButton').addEventListener('click', redirectToSelectTemplateStage);
     document.querySelector('#exitButton').addEventListener('click', redirectToLoginStage);
 }
-
-// user actions
 
 function createUser() {
     let username = document.querySelector('#userNameInput').value;
@@ -126,17 +117,13 @@ function enterLogin() {
     response
         .then((result) => result.json())
         .then((res) => {
-            console.log(res);
             if (res.length === 0) {
-                drawValidationWarning('Игрока с таким именен нет!');
-                // alert('Игрока с таким имененм нет!');
+                drawValidationWarning('Игрока с таким именем нет!');
                 return;
             }
             getCurrentState();
         });
 }
-
-// modal
 
 function setModalEvents() {
     let modal = document.querySelector('#optionModal');
@@ -161,15 +148,13 @@ function setModalEvents() {
     };
 }
 
-// validation
-
 function drawValidationWarning(message) {
     let input = document.querySelector('#userNameInput');
-    let validationWarningElem = document.querySelector('#ValidationWarning');
+    let validationWarningElem = document.querySelector('.validationWarning');
     if (validationWarningElem) {
         validationWarningElem.remove();
     }
-    let warningText = `<span id="ValidationWarning" style="margin: 0 auto">${message}</span>`;
+    let warningText = `<span class="validationWarning" style="margin: 0 auto">${message}</span>`;
     input.insertAdjacentHTML('afterend', warningText);
     input.style.borderStyle = 'solid';
     input.style.borderColor = 'red';

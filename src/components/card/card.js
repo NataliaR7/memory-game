@@ -1,9 +1,9 @@
 export default function card(set = 'cardSet1', picture = '1.png', number, gradient) {
     let content;
     if (set === 'cardSet3') {
-        content = `<img alt="card" class="back card${number}" style="${gradient};"/>`
+        content = `<img class="back card${number}" style="${gradient};"/>`
     } else {
-        content = `<img alt="card" class="back card${number}" src="./img/${set}/${picture}"/>`
+        content = `<img class="back card${number}" src="./img/${set}/${picture}"/>`
     }
     return `
     <div class = 'card-wrapper flip-right'>
