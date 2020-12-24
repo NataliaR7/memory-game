@@ -1,7 +1,7 @@
 import './gameTablePage.less';
 import Cookies from 'js-cookie';
 
-function getGameTablePage(params) {
+function getGameTablePage() {
     let level = 'levelOne';
     switch (Cookies.get('CurrentLevel')) {
         case '1':

@@ -91,7 +91,7 @@ function createUser() {
         })
         .then((res) => {
             if (res.status === 409) {
-                drawValidationWarning('Игрок с таким имененм уже есть!');
+                drawValidationWarning('Игрок с таким именем уже есть!');
                 return;
             }
             enterLogin();
@@ -154,7 +154,7 @@ function drawValidationWarning(message) {
     if (validationWarningElem) {
         validationWarningElem.remove();
     }
-    let warningText = `<span class="validationWarning" style="margin: 0 auto">${message}</span>`;
+    let warningText = `<span class="validationWarning">${message}</span>`;
     input.insertAdjacentHTML('afterend', warningText);
     input.style.borderStyle = 'solid';
     input.style.borderColor = 'red';
