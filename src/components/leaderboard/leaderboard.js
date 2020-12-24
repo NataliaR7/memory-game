@@ -7,6 +7,6 @@ export default function leaderboard(records) {
     <div class="body">${records.join('')}</div>`;
 }
 
-function wrapRecords(record, id) {
-    return `<div id="${id}">${record}</div>`;
+function wrapRecords(record, recordClass) {
+    return `<div class="${recordClass}">${record}</div>`;
 }

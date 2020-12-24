@@ -127,7 +127,7 @@ function enterLogin() {
 
 function setModalEvents() {
     let modal = document.querySelector('#optionModal');
-    let openModalButton = document.querySelector('#modalMenuButton');
+    let openModalButton = document.querySelector('.modalMenuButton');
     let closeModalButton = document.querySelector('.close_modal_window');
     openModalButton.onclick = function (event) {
         if (event.target.nodeName !== 'svg' && event.target.parentElement.nodeName !== 'svg') {

@@ -1,10 +1,10 @@
 import './settingsPage.less';
 
 function getSettingsPage() {
-    return `<form id="newGameForm" class="stylizedForm">
+    return `<form id="settingsForm" class="stylizedForm">
     <div class='contentContainer'>
     <label for="difficulty">Сложность:</label>
-    <select id="difficulty">
+    <select class="settingsFormSelect" id="difficulty">
         <option selected>Легко</option>
         <option>Нормально</option>
         <option>Тяжело</option>
